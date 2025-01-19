@@ -36,14 +36,6 @@ public class DoublyLinkedList<T> {
         this.size = 0; // again, this is just for completeness
     }
 
-    public T getFirst() {
-        return (head == null) ? null : head.value;
-    }
-
-    public T getLast() {
-        return (tail == null) ? null : tail.value;
-    }
-
     // Adds the specified value at the front of the list, updating the head pointer accordingly.
     private void addFirst(T value) {
         Node newNode = new Node(value);
