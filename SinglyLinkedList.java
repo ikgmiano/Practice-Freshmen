@@ -13,14 +13,6 @@ public class SinglyLinkedList<T> {
         }
     }
 
-    public T getFirst() {
-        return head.value;
-    }
-
-    public T getLast() {
-        return tail.value;
-    }
-
     /**
      * It is essential that we have a separate method when dealing with the insertion or deletion at both end nodes
      * because we have a pointer for head and tail. We cannot just add and delete without updating where the head
