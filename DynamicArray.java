@@ -7,12 +7,14 @@ public class DynamicArray<T> {
     private int capacity;
     private int size;
 
+    // Constructs an empty dynamic array object with its capacity set to DEFAULT_CAPACITY.
     DynamicArray() {
         this.capacity = DEFAULT_CAPACITY;
         this.elementData = new Object[capacity];
         this.size = 0; // this isn't required, I just initialized it for completeness :)
     }
 
+    // Constructs an empty dynamic array object with its capacity set to the specified capacity.
     DynamicArray(int capacity) {
         this.capacity = capacity;
         this.elementData = new Object[capacity];
