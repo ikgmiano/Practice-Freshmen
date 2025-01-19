@@ -137,6 +137,10 @@ public class SinglyLinkedList<T> {
 
     // Removes the first instance of the specified value from the list and return it, otherwise return null.
     public T remove(T value) {
+        if (isEmpty()) {
+            throw new NoSuchElementException(); // there's nothing to remove if array is empty
+        }
+
         Node curr = head;
         Node prev = null;
 
