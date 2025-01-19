@@ -170,9 +170,11 @@ public class DynamicArray<T> {
         }
 
         String string = "";
+
         for (int i = 0; i < size; i++) {
             string += elementData[i] + ", ";
         }
+        
         string = "[" + string.substring(0, string.length() - 2) + "]";
         return string;
     }
