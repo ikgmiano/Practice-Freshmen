@@ -1,6 +1,8 @@
 import java.util.*;
 
 public class TowerOfHanoi {
+	static int numOfMoves = 0;
+	
 	public static void main(String[] args) {
 		Stack<Integer> start = new Stack<>();
 		Stack<Integer> middle = new Stack<>();
@@ -18,15 +20,10 @@ public class TowerOfHanoi {
 		System.out.println(middle);
 		System.out.println(end);
 		
-		solve(numOfDisc, start, middle, end);
-		
-		System.out.println("\nSolved State:");
-		System.out.println(start);
-		System.out.println(middle);
-		System.out.println(end);
+		solve(numOfDisc, start, middle, end, start, middle, end);
 		
 		System.out.println("The puzzle is done!");
-		
+		System.out.println("Number of moves: " + numOfMoves);
 	}
 	
 	private static void loadDisc(Stack start, int size) {
@@ -35,24 +32,45 @@ public class TowerOfHanoi {
 		}
 	}
 	
-	private static void solve(int n, Stack start, Stack middle, Stack end) {
-		// base case
+	private static void solve(int n, Stack start, Stack middle, Stack end, Stack startRef, Stack midRef, Stack endRef) {
+		// BASE CASE
 		if (n == 1) {
+			try {
+				Thread.sleep(400);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
 			end.push(start.pop());
+			numOfMoves++;
+			
+			System.out.println("\n" + startRef);
+			System.out.println(midRef);
+			System.out.println(endRef);
+
 			return;
 		}
 		
-		// recursive case
+		// RECURSIVE CASE
 		
-		// put n - 1 discs at the middle to make way for the nth disc
-		solve(n - 1, start, end, middle);
+		// put the n - 1 discs at the middle to make way for the nth disc
+		solve(n - 1, start, end, middle, startRef, midRef, endRef);
+		
+		try {
+			Thread.sleep(400);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		
 		// put nth disc at the end
 		end.push(start.pop());
+		numOfMoves++;
+
+		System.out.println("\n" + startRef);
+		System.out.println(midRef);
+		System.out.println(endRef);
 		
-		// then recursively call solve on the remaining n - 1 discs,
-        // since we put in the middle previously, we use middle as the start
-        // and put it in the end
-		solve(n - 1, middle, start, end);
+		// recursively call solve() on the remaining n - 1 discs.
+		solve(n - 1, middle, start, end, startRef, midRef, endRef);
 	}
 }
