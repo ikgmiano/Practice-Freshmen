@@ -6,7 +6,7 @@ public class DequeLinearDynamicArray<T> {
     private int front;
     private int rear;
 
-    // Creates an empty circular queue.
+    // Creates an empty linear queue.
     // Implementation Note: This data structure uses a dynamic array as its internal structure.
     DequeLinearDynamicArray() {
         this.elementData = new DynamicArray<>();

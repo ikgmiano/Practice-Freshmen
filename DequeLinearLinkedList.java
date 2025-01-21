@@ -6,7 +6,7 @@ public class DequeLinearLinkedList<T> {
     private int front;
     private int rear;
 
-    // Creates an empty circular queue.
+    // Creates an linear circular queue.
     // Implementation Note: This data structure uses a doubly linked list as its internal structure.
     DequeLinearLinkedList() {
         this.elementData = new DoublyLinkedList<>();
