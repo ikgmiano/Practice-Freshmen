@@ -4,30 +4,18 @@ public class Main {
     static Scanner scanner = new Scanner(System.in);
     public static void main(String[] args) {
         boolean stop = false;
-        
         do {
             displayMenu();
             int choice = scanner.nextInt();
-            
             switch (choice) {
-                // ACCOUNT CREATION
+                // Case for account creation
                 case 1:
-                    scanner.nextLine();
-                    System.out.print("\nAccount Name: ");
-                    String name = scanner.nextLine().toUpperCase();
-                    System.out.print("Account Pin: ");
-                    String pin = scanner.next();
-                    System.out.print("Initial Deposit: ");
-                    double amount = scanner.nextDouble();
-                    BankAccount newAccount = new BankAccount(name, pin, amount);
-
-                    displayAccountDetails(newAccount);
+                    createAccount();
                     break;
 
-                // ACCOUNT TRANSACTION
+                // Case for account transactions (e.g. deposit, withdrawal)
                 case 2:
                     // Login prompt
-                    System.out.print("\nEnter Account ID: ");
                     BankAccount account = getAccount();
                     if (account == null) {
                         System.out.println("Login cancelled, returning to main menu.");
@@ -39,31 +27,40 @@ public class Main {
                         displayTransactionMenu();
                         int transactionChoice = scanner.nextInt();
                         switch (transactionChoice) {
+                            // Case for deposit
                             case 1:
-                                if (deposit(account)) {
-                                    break;
-                                } else {
+                                if (!deposit(account)) {
                                     continue;
                                 }
+                                break;
+
+                            // Case for withdraw
                             case 2:
-                                if (withdraw(account)) {
-                                    break;
-                                } else {
+                                if (!withdraw(account)) {
                                     continue;
                                 }
+                                break;
+
+                            // Case for transfer
                             case 3:
-                                if (transfer(account)) {
-                                    break;
-                                } else {
+                                if (!transfer(account)) {
                                     continue;
                                 }
+                                break;
+
+                            // Case for balance inquiry
                             case 4:
                                 balanceInquiry(account);
                                 break;
+
+                            // Case for checking transaction history
                             case 5:
                                 transactionHistory(account);
                                 break;
+                                
+                            // Case for exiting from the transaction menu
                             default:
+                                System.out.println("Transaction cancelled, returning to main menu.");
                                 break TRANSACTION_PROCESS;
                         } 
                         
@@ -74,11 +71,13 @@ public class Main {
                     }
                     break;
 
-                // EXIT PROGRAM
+                // Case for exiting the ATM system
                 case 3:
                     System.out.println("\nThank you for using the banking system!");
                     stop = true;
                     break;
+
+                // Default case for invalid inputs
                 default:
                     System.out.println("Invalid choice.");
                     break;
@@ -121,9 +120,23 @@ public class Main {
         );
     }
 
+    public static void createAccount() {
+        scanner.nextLine();
+
+        System.out.print("\nAccount Name: ");
+        String name = scanner.nextLine().toUpperCase();
+        System.out.print("Account Pin: ");
+        String pin = scanner.next();
+        System.out.print("Initial Deposit: ");
+        double amount = scanner.nextDouble();
+
+        BankAccount newAccount = new BankAccount(name, pin, amount);
+
+        displayAccountDetails(newAccount);
+    }
+
     public static boolean deposit(BankAccount account) {
         double amount;
-
         while (true) {
             System.out.print("\nEnter Deposit Amount: ");
             amount = scanner.nextDouble();
@@ -136,22 +149,19 @@ public class Main {
                     System.out.printf("You have successfully deposited an amount of $%,.2f.\n", amount);
                     return true;
                 } catch (IllegalArgumentException e) {
-                    System.out.println("Amount cannot be negative.");
+                    System.out.println(e.getMessage());
                 }
             }
 
             System.out.print("Do you wish to deposit another amount? (1-Yes, 0-No): ");
             if (scanner.nextInt() == 0) {
-                break;
+                return false;
             }
         }
-
-        return false;
     }
 
     public static boolean withdraw(BankAccount account) {
         double amount;
-
         while (true) {
             System.out.print("\nEnter Withdrawal Amount: ");
             amount = scanner.nextDouble();
@@ -164,29 +174,25 @@ public class Main {
                     System.out.printf("You have successfully withdrew an amount of $%,.2f.\n", amount);
                     return true;
                 } catch (IllegalArgumentException e) {
-                    System.out.println("Amount cannot be negative.");
+                    System.out.println(e.getMessage());
                 } catch (IllegalStateException e) {
-                    System.out.println("You do not have enough balance for this transaction.");
+                    System.out.println(e.getMessage());
                 }
             }
 
             System.out.print("Do you wish to withdraw another amount? (1-Yes, 0-No): ");
             if (scanner.nextInt() == 0) {
-                break;
+                return false;
             }
         }
-
-        return false;
     }
 
     public static boolean transfer(BankAccount account) {
         int accountId;
         double amount;
-
         while (true) {
             System.out.print("\nEnter Recepient Account ID: ");
             accountId = scanner.nextInt();
-
             System.out.print("Enter Transfer Amount: ");
             amount = scanner.nextDouble();
 
@@ -198,23 +204,21 @@ public class Main {
                     System.out.printf("You have succesfuly transferred an amount of $%,.2f to an account with an ID of %d.\n", amount, accountId);
                     return true;
                 } catch (IllegalAccessError e) {
-                    System.out.println("Cannot transfer funds to own account.");
+                    System.out.println(e.getMessage());
                 } catch (NullPointerException e) {
-                    System.out.println("Recepient account ID is invalid or does not exist. Your funds has been returned.");
+                    System.out.println(e.getMessage());
                 } catch (IllegalArgumentException e) {
-                    System.out.println("Amount cannot be negative.");
+                    System.out.println(e.getMessage());
                 } catch (IllegalStateException e) {
-                    System.out.println("You do not have enough balance for this transaction.");
+                    System.out.println(e.getMessage());
                 }
             }
 
             System.out.print("Do you wish to transfer another amount? (1-Yes, 0-No): ");
             if (scanner.nextInt() == 0) {
-                break;
+                return false;
             }
         }
-
-        return false;
     }
 
     public static void balanceInquiry(BankAccount account) {
@@ -227,12 +231,15 @@ public class Main {
 
     public static BankAccount getAccount() {
         BankAccount account;
+        System.out.print("\nEnter Account ID: ");
         while ((account = BankAccount.getBankAccount(scanner.nextInt())) == null) {
             System.out.println("Invalid, the account id does not exist.");
             System.out.print("Do you want to try again? (1-Yes, 0-No): ");
+
             if (scanner.nextInt() == 0) {
                 return null;
             }
+
             System.out.print("Enter Account ID: ");
         }
         return account;
