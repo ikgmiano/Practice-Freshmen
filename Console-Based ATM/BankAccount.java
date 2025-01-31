@@ -1,4 +1,8 @@
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class BankAccount implements Serializable {
@@ -14,7 +18,7 @@ public class BankAccount implements Serializable {
     BankAccount(String accountName, String pin, double amount) {
         this.accountId = uniqueIdGenerator.getNextUniqueId();
         this.accountName = accountName;
-        this.pin = pin; // limit pin to 4-6 digits only.
+        this.pin = pin;
         this.balance = (amount >= 0) ? amount : 0;
         this.transactionHistory.add(String.format("Initial Deposit: \t+%,.2f", amount));
         listOfAccounts.add(this);
@@ -56,8 +60,8 @@ public class BankAccount implements Serializable {
             throw new IllegalStateException("Amount is greater than the current balance.");
         }
 
-        recipientAccount.receive(amount);
         balance -= amount;
+        recipientAccount.receive(amount);
         transactionHistory.add(String.format("Transfer: \t\t\t\t\t-%,.2f", amount));
     }
 
@@ -72,13 +76,18 @@ public class BankAccount implements Serializable {
 
     public String displayTransactionHistory() {
         String string = "";
-
         for (String transaction : transactionHistory) {
             string += transaction + "\n";
         }
         string += String.format("Current balance: \t %,.2f", balance);
-
         return string;
+    }
+
+    public boolean isPinValid(String pin) {
+        if (this.pin.equals(pin)) {
+            return true;
+        }
+        return false;
     }
 
     // GETTER METHODS
@@ -88,13 +97,6 @@ public class BankAccount implements Serializable {
 
     public String getAccountName() {
         return accountName;
-    }
-
-    public boolean isPinValid(String pin) {
-        if (pin == this.pin) {
-            return true;
-        }
-        return false;
     }
 
     public static BankAccount getBankAccount(int accountId) {
@@ -110,14 +112,18 @@ public class BankAccount implements Serializable {
     private static ArrayList<BankAccount> loadAccounts() {
         try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream("accounts.ser"))) {
             return (ArrayList<BankAccount>) objectInputStream.readObject();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return new ArrayList<>();
     }
 
     public static void saveAccounts() {
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream("accounts.ser"))) {
             objectOutputStream.writeObject(listOfAccounts);;
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

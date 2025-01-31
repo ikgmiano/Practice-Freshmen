@@ -6,6 +6,7 @@ public class Main {
         boolean stop = false;
         do {
             displayMenu();
+
             int choice = scanner.nextInt();
             switch (choice) {
                 // Case for account creation
@@ -22,9 +23,17 @@ public class Main {
                         break;
                     }
 
+                    // Security validation (pin)
+                    boolean isSuccessful = authenticateAccountPin(account);
+                    if (!isSuccessful) {
+                        System.out.println("Authentication cancelled, returning to main menu.");
+                        break;
+                    }
+
                     TRANSACTION_PROCESS:
                     while (true) {
                         displayTransactionMenu();
+
                         int transactionChoice = scanner.nextInt();
                         switch (transactionChoice) {
                             // Case for deposit
@@ -77,7 +86,7 @@ public class Main {
                     stop = true;
                     break;
 
-                // Default case for invalid inputs
+                // Default case for invalid choice
                 default:
                     System.out.println("Invalid choice.");
                     break;
@@ -85,6 +94,7 @@ public class Main {
         } while (!stop);
 
         BankAccount.saveAccounts();
+        scanner.close();
     }
 
     public static void displayMenu() {
@@ -125,8 +135,12 @@ public class Main {
 
         System.out.print("\nAccount Name: ");
         String name = scanner.nextLine().toUpperCase();
-        System.out.print("Account Pin: ");
-        String pin = scanner.next();
+        System.out.print("Account Pin (6-digit): ");
+        String pin;
+        while (!isPinValid(pin = scanner.next())) {
+            System.out.println("Invalid pin combination, please try again.");
+            System.out.print("Account Pin (6-digit): ");
+        }
         System.out.print("Initial Deposit: ");
         double amount = scanner.nextDouble();
 
@@ -135,8 +149,16 @@ public class Main {
         displayAccountDetails(newAccount);
     }
 
+    
+    /**
+     * This method prompts the user for a valid amount that will be added to the account object's balance.
+     * 
+     * @param account The account in which to deposit the amount to.
+     * @return true if the transaction was valid and successful, false otherwise.
+     */
     public static boolean deposit(BankAccount account) {
         double amount;
+        // Prompts the user for the amount until the transaction is valid or cancelled 
         while (true) {
             System.out.print("\nEnter Deposit Amount: ");
             amount = scanner.nextDouble();
@@ -147,21 +169,30 @@ public class Main {
                 try {
                     account.deposit(amount);
                     System.out.printf("You have successfully deposited an amount of $%,.2f.\n", amount);
-                    return true;
+                    return true; // Transaction is valid
                 } catch (IllegalArgumentException e) {
-                    System.out.println(e.getMessage());
+                    System.out.println(e.getMessage()); // Amount is negative
                 }
             }
 
+            // Prompts the user for retry if previous transaction was invalid or cancelled
             System.out.print("Do you wish to deposit another amount? (1-Yes, 0-No): ");
             if (scanner.nextInt() == 0) {
-                return false;
+                return false; // Transaction cancelled
             }
         }
     }
 
+    /**
+     * 
+     * This method prompts the user for a valid amount that will be deducted to the account object's balance.
+     * 
+     * @param account The account in which to withdraw the amount from.
+     * @return true if the transaction was valid and successful, false otherwise.
+     */
     public static boolean withdraw(BankAccount account) {
         double amount;
+        // Prompts the user for the amount until the transaction is valid or cancelled
         while (true) {
             System.out.print("\nEnter Withdrawal Amount: ");
             amount = scanner.nextDouble();
@@ -172,26 +203,36 @@ public class Main {
                 try {
                     account.withdraw(amount);
                     System.out.printf("You have successfully withdrew an amount of $%,.2f.\n", amount);
-                    return true;
+                    return true; // Transaction is valid
                 } catch (IllegalArgumentException e) {
-                    System.out.println(e.getMessage());
+                    System.out.println(e.getMessage()); // Amount is negative
                 } catch (IllegalStateException e) {
-                    System.out.println(e.getMessage());
+                    System.out.println(e.getMessage()); // Amount is greater than the account's current balance
                 }
             }
 
+            // Prompts the user for retry if previous transaction was invalid or cancelled
             System.out.print("Do you wish to withdraw another amount? (1-Yes, 0-No): ");
             if (scanner.nextInt() == 0) {
-                return false;
+                return false; // Transaction cancelled
             }
         }
     }
 
+    /**
+     * 
+     * This method prompts the user for a valid amount that will be deducted to the account object's balance
+     * and added to the recepient account's balance.
+     * 
+     * @param account The account in which to deduct the transfer amount from.
+     * @return true if the transaction was valid and successful, false otherwise.
+     */
     public static boolean transfer(BankAccount account) {
         int accountId;
         double amount;
+        // Prompts the user for the amount until the transaction is valid or cancelled
         while (true) {
-            System.out.print("\nEnter Recepient Account ID: ");
+            System.out.print("\nEnter Recepient Account ID: "); // ID of the receiving account object
             accountId = scanner.nextInt();
             System.out.print("Enter Transfer Amount: ");
             amount = scanner.nextDouble();
@@ -202,29 +243,40 @@ public class Main {
                 try {
                     account.transfer(accountId, amount);
                     System.out.printf("You have succesfuly transferred an amount of $%,.2f to an account with an ID of %d.\n", amount, accountId);
-                    return true;
+                    return true; // Transaction is valid
                 } catch (IllegalAccessError e) {
-                    System.out.println(e.getMessage());
+                    System.out.println(e.getMessage()); // Attempt to transfer to own account
                 } catch (NullPointerException e) {
-                    System.out.println(e.getMessage());
+                    System.out.println(e.getMessage()); // Recepient account ID is invalid or does not exist
                 } catch (IllegalArgumentException e) {
-                    System.out.println(e.getMessage());
+                    System.out.println(e.getMessage()); // Amount is negative
                 } catch (IllegalStateException e) {
-                    System.out.println(e.getMessage());
+                    System.out.println(e.getMessage()); // Amount is greater than the account's current balance
                 }
             }
 
-            System.out.print("Do you wish to transfer another amount? (1-Yes, 0-No): ");
+            // Prompts the user for retry if previous transaction was invalid or cancelled
+            System.out.print("Do you wish to do another transfer? (1-Yes, 0-No): ");
             if (scanner.nextInt() == 0) {
-                return false;
+                return false; // Transaction cancelled
             }
         }
     }
-
+    
+    /**
+     * This method prints the current balance of the account object.
+     * 
+     * @param account The account for which to check the balance.
+     */
     public static void balanceInquiry(BankAccount account) {
         System.out.printf("\nYou account's current balance is $%,.2f.\n", account.balanceInquiry());
     }
 
+    /**
+     * This method prints the transaction history of the account object. 
+     * 
+     * @param account The account for which to check the transaction history.
+     */
     public static void transactionHistory(BankAccount account) {
         System.out.println("\n" + account.displayTransactionHistory());
     }
@@ -232,16 +284,48 @@ public class Main {
     public static BankAccount getAccount() {
         BankAccount account;
         System.out.print("\nEnter Account ID: ");
+        // Prompts the user for an account ID until it's valid or attempt is cancelled
         while ((account = BankAccount.getBankAccount(scanner.nextInt())) == null) {
             System.out.println("Invalid, the account id does not exist.");
             System.out.print("Do you want to try again? (1-Yes, 0-No): ");
 
             if (scanner.nextInt() == 0) {
-                return null;
+                return null; // Login attempt cancelled
             }
 
             System.out.print("Enter Account ID: ");
         }
-        return account;
+        return account; // Valid account found
+    }
+
+    public static boolean authenticateAccountPin(BankAccount account) {
+        System.out.print("\nEnter PIN Number: ");
+        // Prompts the user for PIN until it's correct or attempt is cancelled
+        while (!account.isPinValid(scanner.next())) {
+            System.out.println("Invalid pin.");
+            System.out.print("Do you want to try again? (1-Yes, 0-No): ");
+
+            if (scanner.nextInt() == 0) {
+                return false; // PIN Authentication cancelled
+            }
+
+            System.out.print("Enter PIN Number: ");
+        }
+        return true; // PIN is correct
+    }
+
+    private static boolean isPinValid(String pin) {
+        // Checks if the pin length is valid
+        if (pin.length() != 6) {
+            return false;
+        }
+        // Checks if the pin contains digit only
+        try {
+            Integer.parseInt(pin);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+
+        return true;
     }
 }
