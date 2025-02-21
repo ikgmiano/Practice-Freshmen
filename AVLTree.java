@@ -154,14 +154,8 @@ public class AVLTree<T extends Comparable<T>> {
         }
 
         StringBuilder sb = new StringBuilder();
-        levelorder(root, sb);
-        return "[" + sb.substring(0, sb.length() - 2) + "]";
-    }
-
-    private StringBuilder levelorder(Node root, StringBuilder sb) {
         Queue<Node> q = new LinkedList<>();
         q.add(root);
-
         while (!q.isEmpty()) {
             Node curr = q.poll();
             if (curr.left != null) {
@@ -172,7 +166,7 @@ public class AVLTree<T extends Comparable<T>> {
             }
             sb.append(curr.data).append(", ");
         }
-        return sb;
+        return "[" + sb.substring(0, sb.length() - 2) + "]";
     }
 
     public T getMin() {
