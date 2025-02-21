@@ -14,9 +14,10 @@ public class AVLTree<T extends Comparable<T>> {
             return new Node(data);
         }
         
-        if (data.compareTo(root.data) < 0) {
+        int difference = data.compareTo(root.data);
+        if (difference < 0) {
             root.left = insert(root.left, data);
-        } else if (data.compareTo(root.data) > 0) {
+        } else if (difference > 0) {
             root.right = insert(root.right, data);
         } else {
             // case for duplicates
@@ -36,9 +37,10 @@ public class AVLTree<T extends Comparable<T>> {
             return null;
         }
 
-        if (data.compareTo(root.data) < 0) {
+        int difference = data.compareTo(root.data);
+        if (difference < 0) {
             root.left = delete(root.left, data);
-        } else if (data.compareTo(root.data) > 0) {
+        } else if (difference > 0) {
             root.right = delete(root.right, data);
         } else {
             if (root.right == null) {
@@ -57,15 +59,15 @@ public class AVLTree<T extends Comparable<T>> {
 
     // HEIGHT UPDATE
     public void updateHeight(Node node) {
-        int leftHeight = (node.left != null ? node.left.height : -1);
-        int rightHeight = (node.right != null ? node.right.height : -1);
+        int leftHeight = (node.left != null) ? node.left.height : -1;
+        int rightHeight = (node.right != null) ? node.right.height : -1;
         node.height = Math.max(leftHeight, rightHeight) + 1;
     }
 
     // BALANCE FACTOR
     private int getBalanceFactor(Node node) {
-        int leftHeight = (node.left != null ? node.left.height : -1);
-        int rightHeight = (node.right != null ? node.right.height : -1);
+        int leftHeight = (node.left != null) ? node.left.height : -1;
+        int rightHeight = (node.right != null) ? node.right.height : -1;
         return leftHeight - rightHeight;
     }
 
@@ -217,7 +219,7 @@ public class AVLTree<T extends Comparable<T>> {
 
     // return the root of the tree
     public T getRoot() {
-        return (root != null ? root.data : null);
+        return (root != null) ? root.data : null;
     }
 
     // find the depth of a given node
@@ -275,8 +277,8 @@ public class AVLTree<T extends Comparable<T>> {
         Node curr = root;
         while (curr != null) {
             if (data.compareTo(curr.data) == 0) {
-                System.out.println("Left: " + (curr.left != null ? curr.left.data : null));
-                System.out.println("Right: " + (curr.right != null ? curr.right.data : null));
+                System.out.println("Left: " + ((curr.left != null) ? curr.left.data : null));
+                System.out.println("Right: " + ((curr.right != null) ? curr.right.data : null));
                 return;
             } else if (data.compareTo(curr.data) < 0) {
                 curr = curr.left;

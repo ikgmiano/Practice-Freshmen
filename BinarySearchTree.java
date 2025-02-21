@@ -14,10 +14,11 @@ public class BinarySearchTree<T extends Comparable<T>> {
             return new Node(data);
         }
         
-        if (data.compareTo(root.data) < 0) {
+        int difference = data.compareTo(root.data);
+        if (difference < 0) {
             // go left child
             root.left = insert(root.left, data);
-        } else if (data.compareTo(root.data) > 0) {
+        } else if (difference > 0) {
             // go right child
             root.right = insert(root.right, data);
         } else {
@@ -36,20 +37,20 @@ public class BinarySearchTree<T extends Comparable<T>> {
             return null; // to avoid NullPointerException when the data is not in the tree
         }
 
-        if (data.compareTo(root.data) < 0) {
+        int difference = data.compareTo(root.data);
+        if (difference < 0) {
             // go left child
             root.left = delete(root.left, data);
-        } else if (data.compareTo(root.data) > 0) {
+        } else if (difference > 0) {
             // go right child
             root.right = delete(root.right, data);
         } else {
             // data to be deleted is found
-            if (root.right == null) {
-                return root.left; // left child only or leaf node
-            } else if (root.left == null) {
-                return root.right; // right child only
-            } else {
-                // two children (either get predecessor or successor, both are valid. in this case it's predecessor)
+            if (root.right == null) { // left child only or leaf node
+                return root.left; 
+            } else if (root.left == null) { // right child only
+                return root.right; 
+            } else { // two children (either get predecessor or successor, both are valid. in this case it's predecessor)
                 root.data = getMax(root.left);
                 root.left = delete(root.left, root.data); // delete the predecessor (which is now a duplicate)
             }
@@ -105,14 +106,8 @@ public class BinarySearchTree<T extends Comparable<T>> {
         }
 
         StringBuilder sb = new StringBuilder();
-        levelorder(root, sb);
-        return "[" + sb.substring(0, sb.length() - 2) + "]";
-    }
-
-    private StringBuilder levelorder(Node root, StringBuilder sb) {
         Queue<Node> q = new LinkedList<>();
         q.add(root);
-
         while (!q.isEmpty()) {
             Node curr = q.poll();
             if (curr.left != null) {
@@ -123,7 +118,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
             }
             sb.append(curr.data).append(", ");
         }
-        return sb;
+        return "[" + sb.substring(0, sb.length() - 2) + "]";
     }
 
     // get min element in the tree
@@ -175,7 +170,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 
     // return the root of the tree
     public T getRoot() {
-        return (root != null ? root.data : null);
+        return (root != null) ? root.data : null;
     }
 
     // find the depth of a given node
@@ -233,8 +228,8 @@ public class BinarySearchTree<T extends Comparable<T>> {
         Node curr = root;
         while (curr != null) {
             if (data.compareTo(curr.data) == 0) {
-                System.out.println("Left: " + (curr.left != null ? curr.left.data : null));
-                System.out.println("Right: " + (curr.right != null ? curr.right.data : null));
+                System.out.println("Left: " + ((curr.left != null) ? curr.left.data : null));
+                System.out.println("Right: " + ((curr.right != null) ? curr.right.data : null));
                 return;
             } else if (data.compareTo(curr.data) < 0) {
                 curr = curr.left;
