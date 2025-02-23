@@ -14,10 +14,10 @@ public class AVLTree<T extends Comparable<T>> {
             return new Node(data);
         }
         
-        int difference = data.compareTo(root.data);
-        if (difference < 0) {
+        int cmp = data.compareTo(root.data);
+        if (cmp < 0) {
             root.left = insert(root.left, data);
-        } else if (difference > 0) {
+        } else if (cmp > 0) {
             root.right = insert(root.right, data);
         } else {
             // case for duplicates
@@ -37,10 +37,10 @@ public class AVLTree<T extends Comparable<T>> {
             return null;
         }
 
-        int difference = data.compareTo(root.data);
-        if (difference < 0) {
+        int cmp = data.compareTo(root.data);
+        if (cmp < 0) {
             root.left = delete(root.left, data);
-        } else if (difference > 0) {
+        } else if (cmp > 0) {
             root.right = delete(root.right, data);
         } else {
             if (root.right == null) {
@@ -116,9 +116,10 @@ public class AVLTree<T extends Comparable<T>> {
 
         Node curr = root;
         while (curr != null) {
-            if (data.compareTo(curr.data) == 0) {
+            int cmp = data.compareTo(curr.data);
+            if (cmp == 0) {
                 return true;
-            } else if (data.compareTo(curr.data) < 0) {
+            } else if (cmp < 0) {
                 curr = curr.left;
             } else {
                 curr = curr.right;
@@ -221,9 +222,10 @@ public class AVLTree<T extends Comparable<T>> {
         Node curr = root;
         int depth = 0;
         while (curr != null) {
-            if (data.compareTo(curr.data) == 0) {
+            int cmp = data.compareTo(curr.data);
+            if (cmp == 0) {
                 return depth;
-            } else if (data.compareTo(curr.data) < 0) {
+            } else if (cmp < 0) {
                 curr = curr.left;
             } else {
                 curr = curr.right;
@@ -232,7 +234,7 @@ public class AVLTree<T extends Comparable<T>> {
         }
         return -1;
     }
-
+    
     // find the height of the tree
     public int getHeight() {
         return getHeight(root);
@@ -242,9 +244,10 @@ public class AVLTree<T extends Comparable<T>> {
     public int getHeight(T data) {
         Node curr = root;
         while (curr != null) {
-            if (data.compareTo(curr.data) == 0) {
+            int cmp = data.compareTo(curr.data);
+            if (cmp == 0) {
                 return getHeight(curr);
-            } else if (data.compareTo(curr.data) < 0) {
+            } else if (cmp < 0) {
                 curr = curr.left;
             } else {
                 curr = curr.right;
@@ -270,11 +273,12 @@ public class AVLTree<T extends Comparable<T>> {
     public void printChildren(T data) {
         Node curr = root;
         while (curr != null) {
-            if (data.compareTo(curr.data) == 0) {
+            int cmp = data.compareTo(curr.data);
+            if (cmp == 0) {
                 System.out.println("Left: " + ((curr.left != null) ? curr.left.data : null));
                 System.out.println("Right: " + ((curr.right != null) ? curr.right.data : null));
                 return;
-            } else if (data.compareTo(curr.data) < 0) {
+            } else if (cmp < 0) {
                 curr = curr.left;
             } else {
                 curr = curr.right;
